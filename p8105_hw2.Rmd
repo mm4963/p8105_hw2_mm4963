@@ -1,0 +1,37 @@
+---
+title: "p8105_hw2"
+author: "Melanie Mayer"
+date: "10/2/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+
+
+```
+
+## Question 1
+
+
+```{r input_data}
+
+transit_data = read_csv(file = "./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>%
+  janitor::clean_names() %>%
+  select(line:ada, -c(exit_only, staffing, staff_hours)) %>%
+  mutate(entry = ifelse(entry == "YES", TRUE, FALSE))
+  
+```
+
+This dataset contains information on the NYC transit, specifically the line/routes per station, their specific longitudinal/latitudinal location, entrance capability and style, whether vending is available, and whether it is ADA compliant. So far I have inputted the raw data, cleaned the variable names so that they are standard and hense easier to call, and selected the variables of interest to me in the dataset. I also converted the "entry" variable into a logical vector. This makes it is easier to analyze due to the underlying numerical values of logical values.
+
+
+The dimensions of this data fram are a length of `r dim(transit_data)[1]` and a width of `r dim(transit_data)[2]`
+
+
+This data is not yet tidy because there are many columns dedicated to the different routes per station. This should not be treated as 11 different variables but as one and each should represent a different observation. I will tidy the data in order to answer the remaining questions.
+
+
+
+
+
