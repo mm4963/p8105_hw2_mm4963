@@ -152,6 +152,31 @@ $(document).ready(function () {
 <p>This dataset contains information on the NYC transit, specifically the line/routes per station, their specific longitudinal/latitudinal location, entrance capability and style, whether vending is available, and whether it is ADA compliant. So far I have inputted the raw data, cleaned the variable names so that they are standard and hense easier to call, and selected the variables of interest to me in the dataset. I also converted the “entry” variable into a logical vector. This makes it is easier to analyze due to the underlying numerical values of logical values.</p>
 <p>The dimensions of this data fram are a length of 1868 and a width of 19</p>
 <p>This data is not yet tidy because there are many columns dedicated to the different routes per station. This should not be treated as 11 different variables but as one and each should represent a different observation. I will tidy the data in order to answer the remaining questions.</p>
+<pre class="r"><code>transit_data = transit_data %&gt;%
+  gather(key = route_number, value = route, route1:route11, na.rm = TRUE)
+
+transit_data_stations = transit_data %&gt;%
+  distinct(transit_data_tidy, station_name, line, .keep_all = TRUE)</code></pre>
+<pre><code>## Warning: Trying to compute distinct() for variables not found in the data:
+## - `transit_data_tidy`
+## This is an error, but only a warning is raised for compatibility reasons.
+## The following variables will be used:
+## - station_name
+## - line</code></pre>
+<p>Now that the data is tidy summarizing is easier. The amount of distinct stations is 465 and the amount which are ADA compliant are 84.</p>
+<p>The proportion of station entrances/exits without vending that allow entrance is 0.5555556</p>
+<pre class="r"><code>transit_data %&gt;%
+  filter(route == &quot;A&quot;) %&gt;%
+  distinct(station_name, line) %&gt;%
+  nrow()</code></pre>
+<pre><code>## [1] 60</code></pre>
+<pre class="r"><code>transit_data %&gt;%
+  filter(route == &quot;A&quot;) %&gt;%
+  distinct(station_name, line, .keep_all = TRUE) %&gt;%
+  filter(ada == TRUE) %&gt;%
+  nrow()  </code></pre>
+<pre><code>## [1] 17</code></pre>
+<p>When the data was tidyd earlier, route number and name were convereted into two distinct variables. 60 distinct stations serve the A train. Of these, 17 are ADA compliant.</p>
 </div>
 
 

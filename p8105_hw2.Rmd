@@ -6,15 +6,15 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-library(tidyverse)
 
+library(tidyverse)
 
 ```
 
 ## Question 1
 
 
-```{r input_data}
+```{r input_data1}
 
 transit_data = read_csv(file = "./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>%
   janitor::clean_names() %>%
@@ -31,6 +31,39 @@ The dimensions of this data fram are a length of `r dim(transit_data)[1]` and a 
 
 This data is not yet tidy because there are many columns dedicated to the different routes per station. This should not be treated as 11 different variables but as one and each should represent a different observation. I will tidy the data in order to answer the remaining questions.
 
+```{r q1_tidy}
+
+transit_data = transit_data %>%
+  gather(key = route_number, value = route, route1:route11, na.rm = TRUE)
+
+transit_data_stations = transit_data %>%
+  distinct(transit_data_tidy, station_name, line, .keep_all = TRUE)
+
+```
+
+Now that the data is tidy summarizing is easier. The amount of distinct stations is `r nrow(transit_data_stations)` and the amount which are ADA compliant are `r sum(transit_data_stations$ada)`.
+
+The proportion of station entrances/exits without vending that allow entrance is `r (transit_data_stations %>% filter(vending == "NO", entry == TRUE) %>% nrow()) / (transit_data_stations %>% filter(vending == "NO") %>% nrow())`
+
+
+```{r q1_reformat}
+
+transit_data %>%
+  filter(route == "A") %>%
+  distinct(station_name, line) %>%
+  nrow()
+
+transit_data %>%
+  filter(route == "A") %>%
+  distinct(station_name, line, .keep_all = TRUE) %>%
+  filter(ada == TRUE) %>%
+  nrow()  
+
+```
+
+
+
+When the data was tidyd earlier, route number and name were convereted into two distinct variables. `r transit_data %>% filter(route == "A") %>% distinct(station_name, line) %>% nrow()` distinct stations serve the A train. Of these, `r transit_data %>% filter(route == "A") %>% distinct(station_name, line, .keep_all = TRUE) %>% filter(ada == TRUE) %>% nrow()` are ADA compliant. 
 
 
 
