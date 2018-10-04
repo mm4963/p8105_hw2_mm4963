@@ -8,6 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 
 library(tidyverse)
+library(readxl)
 
 ```
 
@@ -64,6 +65,47 @@ transit_data %>%
 
 
 When the data was tidyd earlier, route number and name were convereted into two distinct variables. `r transit_data %>% filter(route == "A") %>% distinct(station_name, line) %>% nrow()` distinct stations serve the A train. Of these, `r transit_data %>% filter(route == "A") %>% distinct(station_name, line, .keep_all = TRUE) %>% filter(ada == TRUE) %>% nrow()` are ADA compliant. 
+
+
+
+## Question 2
+
+
+```{r input_data2}
+
+trash_wheel_data = read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", 
+                              sheet = 1, range = cell_cols("A:N")) %>%
+  janitor::clean_names() %>%
+  filter(!is.na(dumpster)) %>%
+  mutate(sports_balls = as.integer(round(sports_balls, 0)))
+
+precipitation_2016_data = read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", 
+                                     sheet = 4, range = cell_rows(2:14)) %>%
+  janitor::clean_names() %>%
+  filter(!is.na(total)) %>%
+  mutate(year = 2016)
+
+
+
+precipitation_2017_data = read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", 
+                                     sheet = 3, range = cell_rows(2:14)) %>%
+  janitor::clean_names() %>%
+  filter(!is.na(total)) %>%
+  mutate(year = 2017)
+
+
+
+precipitation_ttl_data = bind_rows(precipitation_2016_data, precipitation_2017_data) %>%
+  mutate(month = month.name[month])
+  
+
+```
+
+The trash wheel data has `r nrow(trash_wheel_data)` observations and the combined precipitation data for 2016 and 2017 has `r nrow(precipitation_ttl_data)`.
+
+The total precipitation in 2017 was `r sum(precipitation_2017_data$total)`, although only data through August was collected. The median number of sports balls in a dumpster in 2016 were `r trash_wheel_data %>% filter(year == 2016) %>% summarize(median = median(sports_balls))`
+
+
 
 
 

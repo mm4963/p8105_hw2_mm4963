@@ -178,6 +178,35 @@ transit_data_stations = transit_data %&gt;%
 <pre><code>## [1] 17</code></pre>
 <p>When the data was tidyd earlier, route number and name were convereted into two distinct variables. 60 distinct stations serve the A train. Of these, 17 are ADA compliant.</p>
 </div>
+<div id="question-2" class="section level2">
+<h2>Question 2</h2>
+<pre class="r"><code>trash_wheel_data = read_excel(&quot;./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx&quot;, 
+                              sheet = 1, range = cell_cols(&quot;A:N&quot;)) %&gt;%
+  janitor::clean_names() %&gt;%
+  filter(!is.na(dumpster)) %&gt;%
+  mutate(sports_balls = as.integer(round(sports_balls, 0)))
+
+precipitation_2016_data = read_excel(&quot;./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx&quot;, 
+                                     sheet = 4, range = cell_rows(2:14)) %&gt;%
+  janitor::clean_names() %&gt;%
+  filter(!is.na(total)) %&gt;%
+  mutate(year = 2016)
+
+
+
+precipitation_2017_data = read_excel(&quot;./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx&quot;, 
+                                     sheet = 3, range = cell_rows(2:14)) %&gt;%
+  janitor::clean_names() %&gt;%
+  filter(!is.na(total)) %&gt;%
+  mutate(year = 2017)
+
+
+
+precipitation_ttl_data = bind_rows(precipitation_2016_data, precipitation_2017_data) %&gt;%
+  mutate(month = month.name[month])</code></pre>
+<p>The trash wheel data has 216 observations and the combined precipitation data for 2016 and 2017 has 20.</p>
+<p>The total precipitation in 2017 was 29.93, although only data through August was collected. The median number of sports balls in a dumpster in 2016 were 26</p>
+</div>
 
 
 
